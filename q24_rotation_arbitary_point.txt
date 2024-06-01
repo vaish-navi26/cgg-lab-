@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <graphics.h>
+#include <math.h>
+
+#define PI 3.14159265
+
+void transformationMatrixMultiply1(float rotationMatrix[3][3], float translateToOriginMatrix[3][3], float transformationMatrix1[3][3]);
+void resultMultiply(float Polygon[3][3], float transformationMatrix2[3][3], float result[3][3]);
+void  transformationMatrixMultiply2(float transformationMatrix1[3][3], float translateBackMatrix[3][3], float transformationMatrix2[3][3]);
+int main() {
+    float Polygon[3][3] = {
+        {100, 200, 1},
+        {100, 100, 1},
+        {200, 100, 1}
+    };
+
+    float rotationAngle = 0, centerX = 0, centerY = 0;
+
+    int gd = DETECT, gm;
+
+    initgraph(&gd, &gm, (char*)"");
+
+    printf("Enter the rotation angle (in degrees): ");
+    scanf("%f", &rotationAngle);
+    printf("Enter the center of rotation (x y): ");
+    scanf("%f %f", &centerX, &centerY);
+
+    float radian = rotationAngle * (PI / 180);
+
+    float rotationMatrix[3][3] = {
+        {(float)cos(radian), (float)-sin(radian), 0},
+        {(float)sin(radian), (float)cos(radian), 0},
+        {0, 0, 1}
+    };
+
+    // Translation matrix to move center of rotation to origin
+    float translateToOriginMatrix[3][3] = {
+        {1, 0, -centerX},
+        {0, 1, -centerY},
+        {0, 0, 1}
+    };
+
+       float transformationMatrix1[3][3];
+    transformationMatrixMultiply1(rotationMatrix, translateToOriginMatrix, transformationMatrix1);
+
+    // Translation matrix to move center of rotation back to its original position
+    float translateBackMatrix[3][3] = {
+        {1, 0, centerX},
+        {0, 1, centerY},
+        {0, 0, 1}
+    };
+
+     float transformationMatrix2[3][3];
+    transformationMatrixMultiply2(transformationMatrix1, translateBackMatrix, transformationMatrix2);
+
+    
+
+     float result[3][3];
+     resultMultiply(Polygon, transformationMatrix2, result);
+
+    // Draw the original polygon
+    setcolor(WHITE);
+    line(Polygon[0][0], Polygon[1][0], Polygon[0][1], Polygon[1][1]);
+    line(Polygon[0][1], Polygon[1][1], Polygon[0][2], Polygon[1][2]);
+    line(Polygon[0][2], Polygon[1][2], Polygon[0][0], Polygon[1][0]);
+
+    // Draw the transformed polygon
+    setcolor(RED);
+    line(result[0][0], result[1][0], result[0][1], result[1][1]);
+    line(result[0][1], result[1][1], result[0][2], result[1][2]);
+    line(result[0][2], result[1][2], result[0][0], result[1][0]);
+
+    getch();
+    closegraph();
+
+    return 0;
+}
+
+
+
+void resultMultiply(float Polygon[3][3], float transformationMatrix2[3][3], float result[3][3]) {
+    for(int i = 0; i < 3; i++) {
+        for(int j = 0; j < 3; j++) {
+            result[i][j] = 0;
+            for(int k = 0; k < 3; k++) {
+                result[i][j] += Polygon[i][k] * transformationMatrix2[k][j];
+            }
+        }
+    }
+}
+
+void transformationMatrixMultiply1(float rotationMatrix[3][3], float translateToOriginMatrix[3][3], float transformationMatrix1[3][3])
+{
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+            transformationMatrix1[i][j] = 0;
+            for(int k = 0; k < 3; k++){
+                transformationMatrix1[i][j] += translateToOriginMatrix[i][k] * rotationMatrix[k][j];
+            }
+        }
+    }
+}
+
+void transformationMatrixMultiply2(float transformationMatrix1[3][3], float translateBackMatrix[3][3], float transformationMatrix2[3][3])
+{
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+            transformationMatrix2[i][j] = 0;
+            for(int k = 0; k < 3; k++){
+                transformationMatrix2[i][j] += transformationMatrix1[i][k] * translateBackMatrix[k][j];
+            }
+        }
+    }
+}

@@ -1,0 +1,36 @@
+#include <graphics.h>
+#include <stdio.h>
+void drawPoint(int x, int y, int color) {
+    setcolor(color);
+    circle(x, y, 5);
+    floodfill(x, y, color);
+}
+
+int main() {
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, "");
+
+    // Divide the screen vertically
+    int mid_x = getmaxx() / 2;
+
+    // Initial point
+    int x = mid_x / 2, y = 100;
+    drawPoint(x, y, WHITE);
+
+    // Translation vectors
+    int dx1 = 50, dy1 = 30; // First translation vector
+    int dx2 = 20, dy2 = 40; // Second translation vector
+
+    // Apply translations in order 1 (dx1, dy1) then (dx2, dy2)
+    int x1_order1 = x + dx1, y1_order1 = y + dy1;
+    int x2_order1 = x1_order1 + dx2, y2_order1 = y1_order1 + dy2;
+    drawPoint(x2_order1, y2_order1, GREEN);
+
+    // Apply translations in order 2 (dx2, dy2) then (dx1, dy1)
+    int x1_order2 = x + dx2, y1_order2 = y + dy2;
+    int x2_order2 = x1_order2 + dx1, y2_order2 = y1_order2 + dy1;
+    drawPoint(x2_order2, y2_order2, RED);
+    getch();
+    closegraph();
+    return 0;
+}

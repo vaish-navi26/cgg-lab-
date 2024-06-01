@@ -1,0 +1,60 @@
+# include <stdio.h>
+# include <conio.h>
+# include <graphics.h>
+# include <math.h>
+
+int xs[100], ys[100], i, n;
+float shearXfactor, shearYfactor;
+
+void DrawFn(){
+    for(i = 0; i < n; i++){
+        line(xs[i], ys[i], xs[i + 1] % n, ys[i + 1] % n);
+    }
+}
+
+void shearAlongX(){
+    for(i = 0; i < n; i++){
+        xs[i] = xs[i] + shearXfactor * ys[i];
+    }
+}
+
+void shearAlongY(){
+    for(i = 0; i < n; i++){
+        ys[i] = ys[i] + shearYfactor * xs[i];
+    }
+}
+
+int main(){
+
+    printf("Enter the number of points you want: ");
+    scanf("%d", &n);
+
+    for(i = 0; i < n; i++){
+
+        printf("Enter the coordinates for x%d and y%d: ", i, i);
+        scanf("%d %d", &xs[i], &ys[i]);
+    }
+
+    printf("Enter x shear factor: ");
+    scanf("%f", &shearXfactor);
+    printf("Enter y shear factor: ");
+    scanf("%f", &shearYfactor);
+
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, (char*)"");
+    setcolor(RED);
+    DrawFn(); // original
+
+    shearAlongX();
+    setcolor(BLUE);
+    DrawFn(); // Xshear
+
+    shearAlongY();
+    setcolor(GREEN);
+    DrawFn(); // Yshear
+
+    getch();
+    closegraph();
+
+    return 0;
+}

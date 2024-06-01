@@ -1,0 +1,102 @@
+# include <graphics.h>
+# include <stdio.h>
+# include <conio.h>
+# include <math.h>
+
+# define PI 3.14
+
+void transformationMatrixMultiply(float scalingMatrix[3][3], float rotationMatrix[3][3], float transformationMatrix[3][3]);
+void resultMultiply(float Polygon[3][3], float transformationMatrix[3][3], float result[3][3]);
+
+int main()
+{
+     float Polygon[3][3] = {
+        {100, 200, 1},
+        {100, 100, 1},
+        {200, 100, 1}
+     };
+
+     float ScaleX = 0, ScaleY = 0, rotationAngle = 0;
+
+     int gd = DETECT, gm;
+
+     initgraph(&gd, &gm, (char*)"");
+
+
+    printf("Enter the scaling factors:-");
+    scanf("%f %f", &ScaleX, &ScaleY);
+    printf("\n Enter the Rotating Angle:-");
+    scanf("%f", &rotationAngle);
+
+    float radian = rotationAngle * (PI/180);
+
+    // now make the ratation and scaling matrix.
+
+    float scalingMatrix[3][3] = {
+        {ScaleX, 0, 0},
+        {0, ScaleY, 0},
+        {0, 0, 1}
+    };
+
+    float rotationMatrix[3][3] = {
+        {(float)cos(radian), (float)-sin(radian), 0},
+        {(float)sin(radian), (float)cos(radian), 0},
+        {0, 0, 1}
+    };
+
+    // Now First we have to make a matrix for Scaling and rotation, which will be transformation matrix.
+
+    float transformationMatrix[3][3];
+
+    transformationMatrixMultiply(scalingMatrix, rotationMatrix, transformationMatrix);
+
+    float result[3][3];
+
+    resultMultiply(Polygon, transformationMatrix, result);
+
+    // now lets make the polygon.
+
+    // Draw the original polygon
+    setcolor(WHITE);
+    line(Polygon[0][0], Polygon[1][0], Polygon[0][1], Polygon[1][1]);
+    line(Polygon[0][1], Polygon[1][1], Polygon[0][2], Polygon[1][2]);
+    line(Polygon[0][2], Polygon[1][2], Polygon[0][0], Polygon[1][0]);
+
+    // Draw the transformed polygon
+    setcolor(RED);
+    line(result[0][0], result[1][0], result[0][1], result[1][1]);
+    line(result[0][1], result[1][1], result[0][2], result[1][2]);
+    line(result[0][2], result[1][2], result[0][0], result[1][0]);
+
+
+     getch();
+
+     closegraph();
+
+    return 0;
+
+}
+
+void transformationMatrixMultiply(float scalingMatrix[3][3], float rotationMatrix[3][3], float transformationMatrix[3][3])
+{
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+            transformationMatrix[i][i] = 0;
+            for(int k = 0; k < 3; k++){
+                transformationMatrix[i][j] += scalingMatrix[i][k] * rotationMatrix[k][j]; // making a transformation matrix.
+            }
+        }
+    }
+}
+
+void resultMultiply(float Polygon[3][3], float transformationMatrix[3][3], float result[3][3])
+{
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+            result[i][j] = 0;
+            for(int k = 0; k < 3; k++){
+                result[i][j] += Polygon[i][k] * transformationMatrix[k][j];
+            }
+        }
+    }
+}

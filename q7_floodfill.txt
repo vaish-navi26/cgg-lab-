@@ -1,0 +1,98 @@
+# include <stdio.h>
+# include <conio.h>
+# include <math.h>
+# include <graphics.h>
+
+int BresenhamLine(int x1, int y1, int x2, int y2);
+int DDA_line(int x1, int y1, int x2, int y2);
+void floodFill(int x, int y, int fillColor, int border_color);
+
+int main()
+{
+    int gd = DETECT, gm;
+    int x1,x2,y1,y2;
+
+    initgraph(&gd,&gm, (char*)"");
+
+   // BresenhamLine(100,200,200,100);
+    DDA_line(200,200,300,200);
+    DDA_line(200,200,200,300);
+    DDA_line(200,300,300,300);
+    DDA_line(300,200,300,300);
+
+    floodFill(250, 250, BLUE, WHITE);
+    getch();
+    closegraph();
+
+    return 0;
+}
+
+int BresenhamLine(int x1, int y1, int x2, int y2)
+{
+
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+    int sx = x1 < x2 ? 1 : -1;
+    int sy = y1 < y2 ? 1 : -1;
+    int err = dx - dy;
+    int err2;
+
+
+    while (x1 != x2 || y1 != y2)
+    {
+        putpixel(x1, y1, WHITE);
+
+        int err2 = 2 * err;
+
+        if (err2 > -dy)
+        {
+            err -=dx;
+            x1 += sx;
+        }
+
+        if (err2 < dx)
+        {
+            err += dx;
+            y1 += sy;
+        }
+        
+        
+    }
+    
+    return 0;
+}
+
+int DDA_line(int x1, int y1, int x2, int y2)
+{
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+
+    int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy); 
+
+    float xincrement = float(dx)/steps;
+    float yincrement = float(dy)/steps;
+
+    float x = x1;
+    float y = y1;
+
+    for (int i = 0; i < steps; i++)
+    {
+        putpixel(round(x), round(y), WHITE);
+        x += xincrement;
+        y += yincrement;
+    }
+    
+    return 0;
+}
+
+
+// Function to perform seed fill algorithm
+void floodFill(int x, int y, int fill_color, int border_color) {
+    if (getpixel(x, y) != border_color && getpixel(x, y) != fill_color) {
+        putpixel(x, y, fill_color);
+        floodFill(x + 1, y, fill_color, border_color);
+        floodFill(x - 1, y, fill_color, border_color);
+        floodFill(x, y + 1, fill_color, border_color);
+        floodFill(x, y - 1, fill_color, border_color);
+    }
+}

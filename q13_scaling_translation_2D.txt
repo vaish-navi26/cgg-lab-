@@ -1,0 +1,78 @@
+#include <graphics.h>
+#include <stdio.h>
+#include <conio.h>
+
+// Function declarations
+void applyScaling(float Polygon[3][3], float ScaleX, float ScaleY, float scaledPolygon[3][3]);
+void applyTranslation(float scaledPolygon[3][3], float TranslateX, float TranslateY, float result[3][3]);
+
+int main() {
+    // Define the original polygon (triangle) vertices
+    float Polygon[3][3] = {
+        {100, 200, 1},
+        {100, 100, 1},
+        {200, 100, 1}
+    };
+
+    // Variables for scaling and translation factors
+    float ScaleX, ScaleY, TranslateX, TranslateY;
+
+    // Initialize graphics mode
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, "");
+
+    if (graphresult() != grOk) {
+        printf("Graphics initialization failed.\n");
+        return 1;
+    }
+
+    // Get scaling and translation factors from the user
+    printf("Enter the scaling factors (ScaleX ScaleY): ");
+    scanf("%f %f", &ScaleX, &ScaleY);
+    printf("Enter the translation factors (TranslateX TranslateY): ");
+    scanf("%f %f", &TranslateX, &TranslateY);
+
+    // Apply scaling to the original polygon
+    float scaledPolygon[3][3];
+    applyScaling(Polygon, ScaleX, ScaleY, scaledPolygon);
+
+    // Apply translation to the scaled polygon
+    float result[3][3];
+    applyTranslation(scaledPolygon, TranslateX, TranslateY, result);
+
+    // Draw the original polygon
+    setcolor(WHITE);
+    line(Polygon[0][0], Polygon[1][0], Polygon[0][1], Polygon[1][1]);
+    line(Polygon[0][1], Polygon[1][1], Polygon[0][2], Polygon[1][2]);
+    line(Polygon[0][2], Polygon[1][2], Polygon[0][0], Polygon[1][0]);
+
+    // Draw the transformed polygon
+    setcolor(RED);
+    line(result[0][0], result[1][0], result[0][1], result[1][1]);
+    line(result[0][1], result[1][1], result[0][2], result[1][2]);
+    line(result[0][2], result[1][2], result[0][0], result[1][0]);
+
+    // Wait for user input before closing the graphics window
+    getch();
+    closegraph();
+
+    return 0;
+}
+
+// Function to apply scaling transformation to the polygon
+void applyScaling(float Polygon[3][3], float ScaleX, float ScaleY, float scaledPolygon[3][3]) {
+    for (int i = 0; i < 3; i++) {
+        scaledPolygon[0][i] = Polygon[0][i] * ScaleX;
+        scaledPolygon[1][i] = Polygon[1][i] * ScaleY;
+        scaledPolygon[2][i] = Polygon[2][i]; // The homogeneous coordinate remains the same
+    }
+}
+
+// Function to apply translation transformation to the scaled polygon
+void applyTranslation(float scaledPolygon[3][3], float TranslateX, float TranslateY, float result[3][3]) {
+    for (int i = 0; i < 3; i++) {
+        result[0][i] = scaledPolygon[0][i] + TranslateX;
+        result[1][i] = scaledPolygon[1][i] + TranslateY;
+        result[2][i] = scaledPolygon[2][i]; // The homogeneous coordinate remains the same
+    }
+}

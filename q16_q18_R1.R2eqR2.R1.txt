@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159265
+
+void multiplyMatrices(float firstMatrix[2][2], float secondMatrix[2][2], float result[2][2]) {
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            result[i][j] = 0;
+            for (int k = 0; k < 2; k++) {
+                result[i][j] += firstMatrix[i][k] * secondMatrix[k][j];
+            }
+        }
+    }
+}
+
+void printMatrix(float matrix[2][2]) {
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            printf("%f ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    float theta1, theta2;
+    printf("Enter the first angle (in degrees): ");
+    scanf("%f", &theta1);
+    printf("Enter the second angle (in degrees): ");
+    scanf("%f", &theta2);
+
+    // Convert angles to radians
+    float radian1 = theta1 * (PI / 180.0);
+    float radian2 = theta2 * (PI / 180.0);
+
+    // Rotation matrix for theta1
+    float R1[2][2] = {
+        {cos(radian1), -sin(radian1)},
+        {sin(radian1), cos(radian1)}
+    };
+
+    // Rotation matrix for theta2
+    float R2[2][2] = {
+        {cos(radian2), -sin(radian2)},
+        {sin(radian2), cos(radian2)}
+    };
+
+    // Result of R1 * R2
+    float result1[2][2];
+    multiplyMatrices(R1, R2, result1);
+
+    // Result of R2 * R1
+    float result2[2][2];
+    multiplyMatrices(R2, R1, result2);
+
+    // Print results
+    printf("R(theta1):\n");
+    printMatrix(R1);
+    printf("R(theta2):\n");
+    printMatrix(R2);
+    printf("R(theta1) * R(theta2):\n");
+    printMatrix(result1);
+    printf("R(theta2) * R(theta1):\n");
+    printMatrix(result2);
+
+    return 0;
+}

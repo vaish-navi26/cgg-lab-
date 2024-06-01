@@ -1,1 +1,1 @@
-# cgg-lab-
+# CGG

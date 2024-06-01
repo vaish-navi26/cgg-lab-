@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <graphics.h>
+#include <math.h>
+#include <conio.h>
+
+// DDA line
+void DDA_line(int x1, int y1, int x2, int y2) {
+    int dx = x2 - x1;
+    int dy = y2 - y1;
+
+    int steps = abs(dx) > abs(dy) ? abs(dx) : abs(dy);
+
+    float xincrement = (float)dx / steps;
+    float yincrement = (float)dy / steps;
+
+    float x = x1;
+    float y = y1;
+
+    for (int i = 0; i < steps; i++) {
+        putpixel(round(x), round(y), WHITE);
+        x += xincrement;
+        y += yincrement;
+    }
+}
+
+// Midpoint circle
+void MidpointCircle(int xc, int yc, int r) {
+    int x = 0, y = r;
+    int err = 1 - r;
+
+    while (x <= y) {
+        putpixel(xc + x, yc + y, WHITE);
+        putpixel(xc - x, yc + y, WHITE);
+        putpixel(xc + x, yc - y, WHITE);
+        putpixel(xc - x, yc - y, WHITE);
+        putpixel(xc + y, yc + x, WHITE);
+        putpixel(xc - y, yc + x, WHITE);
+        putpixel(xc + y, yc - x, WHITE);
+        putpixel(xc - y, yc - x, WHITE);
+
+        x++;
+
+        if (err < 0) {
+            err += 2 * x + 1;
+        }
+        else {
+            y--;
+            err += 2 * (x - y) + 1;
+        }
+    }
+}
+
+int main() {
+    int pivotX = 320, pivotY = 100; // Starting point of the pendulum
+    int length = 200;
+    double angle = M_PI / 4; // Initial angle in radians
+    int direction = 1; // Direction of swing
+
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, NULL);
+
+    while (!kbhit()) {
+        cleardevice();
+        // Calculate endpoint of pendulum
+        int endX = pivotX + length * sin(angle);
+        int endY = pivotY + length * cos(angle);
+
+        // Draw pendulum
+        DDA_line(pivotX, pivotY, endX, endY);
+        MidpointCircle(endX, endY, 10);
+
+        // Adjust angle based on direction
+        angle += 0.05 * direction;
+
+        // Change direction if reaching the extremes
+        if (angle >= M_PI / 3 || angle <= -M_PI / 3) {
+            direction *= -1;
+        }
+
+        // Delay to control animation speed
+        delay(50);
+    }
+
+    getch();
+    closegraph();
+
+    return 0;
+}

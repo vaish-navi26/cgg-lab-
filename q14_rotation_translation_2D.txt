@@ -1,0 +1,91 @@
+#include <graphics.h>
+#include <stdio.h>
+#include <conio.h>
+#include <math.h>
+
+// Function declarations
+void applyRotation(float Polygon[3][3], float angle, float rotatedPolygon[3][3]);
+void applyTranslation(float rotatedPolygon[3][3], float TranslateX, float TranslateY, float result[3][3]);
+
+int main() {
+    // Define the original polygon (triangle) vertices
+    float Polygon[3][3] = {
+        {100, 200, 1},
+        {100, 100, 1},
+        {200, 100, 1}
+    };
+
+    // Variables for rotation angle and translation factors
+    float angle, TranslateX, TranslateY;
+
+    // Initialize graphics mode
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, "");
+
+    if (graphresult() != grOk) {
+        printf("Graphics initialization failed.\n");
+        return 1;
+    }
+
+    // Get rotation angle and translation factors from the user
+    printf("Enter the rotation angle (in degrees): ");
+    scanf("%f", &angle);
+    printf("Enter the translation factors (TranslateX TranslateY): ");
+    scanf("%f %f", &TranslateX, &TranslateY);
+
+    // Convert angle to radians
+    float radian = angle * (M_PI / 180);
+
+    // Apply rotation to the original polygon
+    float rotatedPolygon[3][3];
+    applyRotation(Polygon, radian, rotatedPolygon);
+
+    // Apply translation to the rotated polygon
+    float result[3][3];
+    applyTranslation(rotatedPolygon, TranslateX, TranslateY, result);
+
+    // Draw the original polygon
+    setcolor(WHITE);
+    line(Polygon[0][0], Polygon[1][0], Polygon[0][1], Polygon[1][1]);
+    line(Polygon[0][1], Polygon[1][1], Polygon[0][2], Polygon[1][2]);
+    line(Polygon[0][2], Polygon[1][2], Polygon[0][0], Polygon[1][0]);
+
+    // Draw the transformed polygon
+    setcolor(RED);
+    line(result[0][0], result[1][0], result[0][1], result[1][1]);
+    line(result[0][1], result[1][1], result[0][2], result[1][2]);
+    line(result[0][2], result[1][2], result[0][0], result[1][0]);
+
+    // Wait for user input before closing the graphics window
+    getch();
+    closegraph();
+
+    return 0;
+}
+
+// Function to apply rotation transformation to the polygon
+void applyRotation(float Polygon[3][3], float angle, float rotatedPolygon[3][3]) {
+    float rotationMatrix[3][3] = {
+        {(float)cos(angle), (float)-sin(angle), 0},
+        {(float)sin(angle), (float)cos(angle), 0},
+        {0, 0, 1}
+    };
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            rotatedPolygon[i][j] = 0;
+            for (int k = 0; k < 3; k++) {
+                rotatedPolygon[i][j] += Polygon[i][k] * rotationMatrix[k][j];
+            }
+        }
+    }
+}
+
+// Function to apply translation transformation to the rotated polygon
+void applyTranslation(float rotatedPolygon[3][3], float TranslateX, float TranslateY, float result[3][3]) {
+    for (int i = 0; i < 3; i++) {
+        result[0][i] = rotatedPolygon[0][i] + TranslateX;
+        result[1][i] = rotatedPolygon[1][i] + TranslateY;
+        result[2][i] = rotatedPolygon[2][i]; // The homogeneous coordinate remains the same
+    }
+}

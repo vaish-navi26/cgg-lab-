@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <graphics.h>
+
+void MidpointCircle(int xc, int yc, int r);
+
+int main()
+{
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, (char*)"");
+
+    // Coordinates and radius for the main face circle
+    int face_xc = 320, face_yc = 240, face_r = 100;
+
+    // Coordinates and radius for the left ear
+    int left_ear_xc = face_xc - 70, left_ear_yc = face_yc - 70, left_ear_r = 40;
+
+    // Coordinates and radius for the right ear
+    int right_ear_xc = face_xc + 70, right_ear_yc = face_yc - 70, right_ear_r = 40;
+
+    // Coordinates and radius for the left eye
+    int left_eye_xc = face_xc - 40, left_eye_yc = face_yc - 20, left_eye_r = 10;
+
+    // Coordinates and radius for the right eye
+    int right_eye_xc = face_xc + 40, right_eye_yc = face_yc - 20, right_eye_r = 10;
+
+    // Coordinates and radius for the nose
+    int nose_xc = face_xc, nose_yc = face_yc + 20, nose_r = 15;
+
+    // Drawing the teddy bear face
+    MidpointCircle(face_xc, face_yc, face_r);      // Main face
+    MidpointCircle(left_ear_xc, left_ear_yc, left_ear_r); // Left ear
+    MidpointCircle(right_ear_xc, right_ear_yc, right_ear_r); // Right ear
+    MidpointCircle(left_eye_xc, left_eye_yc, left_eye_r);   // Left eye
+    MidpointCircle(right_eye_xc, right_eye_yc, right_eye_r); // Right eye
+    MidpointCircle(nose_xc, nose_yc, nose_r);       // Nose
+
+    getch();
+    closegraph();
+    return 0;
+}
+
+void MidpointCircle(int xc, int yc, int r)
+{
+    int x = 0;
+    int y = r;
+    int d = 1 - r;
+
+    while (y >= x)
+    {
+        // Plot points in all eight octants
+        putpixel(xc + x, yc + y, WHITE);
+        putpixel(xc - x, yc + y, WHITE);
+        putpixel(xc + x, yc - y, WHITE);
+        putpixel(xc - x, yc - y, WHITE);
+        putpixel(xc + y, yc + x, WHITE);
+        putpixel(xc - y, yc + x, WHITE);
+        putpixel(xc + y, yc - x, WHITE);
+        putpixel(xc - y, yc - x, WHITE);
+
+        x++;
+
+        if (d < 0)
+        {
+            d = d + 2 * x + 1;
+        }
+        else
+        {
+            y--;
+            d = d + 2 * (x - y) + 1;
+        }
+    }
+}

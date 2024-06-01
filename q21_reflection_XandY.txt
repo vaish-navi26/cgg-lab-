@@ -1,0 +1,91 @@
+# include <stdio.h>
+# include <conio.h>
+# include <graphics.h>
+# include <math.h>
+
+
+void reflectionAboutX(float Polygon[3][3], float ReflectionX[3][3], float resultX[3][3]);
+void reflectionAboutY(float Polygon[3][3], float ReflectionY[3][3], float resultY[3][3]);
+
+int main(){
+
+    float Polygon[3][3] = {
+        {100, 200, 1},
+        {100, 100, 1},
+        {200, 100, 1}
+     };
+
+    int gd = DETECT, gm;
+
+     initgraph(&gd, &gm, (char*)"");
+
+    float ReflectionX[3][3] = {
+         { 1,  0,  0},
+        { 0, -1,  0},
+        { 0,  0,  1}
+    };
+
+    float ReflectionY[3][3] = {
+        {-1,  0,  0},
+        { 0,  1,  0},
+        { 0,  0,  1}
+    };
+
+    // Draw the original polygon
+    setcolor(WHITE);
+    line(Polygon[0][0], Polygon[1][0], Polygon[0][1], Polygon[1][1]);
+    line(Polygon[0][1], Polygon[1][1], Polygon[0][2], Polygon[1][2]);
+    line(Polygon[0][2], Polygon[1][2], Polygon[0][0], Polygon[1][0]);
+
+    float resultX[3][3];
+
+    reflectionAboutX(Polygon, ReflectionX, resultX);
+
+    // Draw the reflected polygon for X
+    setcolor(WHITE);
+    line(resultX[0][0], resultX[1][0], resultX[0][1], resultX[1][1]);
+    line(resultX[0][1], resultX[1][1], resultX[0][2], resultX[1][2]);
+    line(resultX[0][2], resultX[1][2], resultX[0][0], resultX[1][0]);
+
+
+    float resultY[3][3];
+
+    reflectionAboutY(Polygon, ReflectionY, resultY);
+
+     // Draw the reflected polygon for Y
+    setcolor(WHITE);
+    line(resultY[0][0], resultY[1][0], resultY[0][1], resultY[1][1]);
+    line(resultY[0][1], resultY[1][1], resultY[0][2], resultY[1][2]);
+    line(resultY[0][2], resultY[1][2], resultY[0][0], resultY[1][0]);
+
+    getch();
+    closegraph();
+
+
+    return 0;
+}
+
+void reflectionAboutX(float Polygon[3][3], float ReflectionX[3][3], float resultX[3][3])
+{
+    for(int i = 0; i < 3; i++){
+        for(int j =0; j < 3; j++){
+            resultX[i][j] = 0;
+            for(int k = 0; k < 3; k++){
+                resultX[i][j] += Polygon[i][k] * ReflectionX[k][j];
+            }
+        }
+    }
+    
+}
+
+void reflectionAboutY(float Polygon[3][3], float ReflectionY[3][3], float resultY[3][3])
+{
+    for(int i = 0; i < 3; i++){
+        for(int j =0; j < 3; j++){
+            resultY[i][j] = 0;
+            for(int k = 0; k < 3; k++){
+                resultY[i][j] += Polygon[i][k] * ReflectionY[k][j];
+            }
+        }
+    }
+}

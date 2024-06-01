@@ -1,0 +1,132 @@
+// Write a C Program to show that Reflection about a line Y=X is equivalent to reflection
+// relative to X-axis followed by anticlockwise rotation of 900.
+
+# include <stdio.h>
+# include <conio.h>
+# include <graphics.h>
+# include <math.h>
+
+void transformationRotationReflection(float reflectX[3][3], float rotate90[3][3],float transformationMatrix[3][3]);
+void case1ReflectionRotation(float Polygon[3][3], float transformationMatrix[3][3], float result1[3][3]);
+void case2XeqY(float Polygon[3][3],float reflectYeqX[3][3], float result2[3][3]);
+
+int main(){
+
+    float Polygon[3][3] = {
+        {300, 400, 1},
+        {300, 300, 1},
+        {400, 300, 1}
+     };
+
+    int gd = DETECT, gm;
+
+    initgraph(&gd, &gm, (char*)"");
+
+     float reflectX[3][3] = {
+        { 1,  0,  0},
+        { 0, -1,  0},
+        { 0,  0,  1}
+    };
+    float rotate90[3][3] = {
+        { 0, -1,  0},
+        { 1,  0,  0},
+        { 0,  0,  1}
+    };
+    // float reflectYeqX[3][3] = {
+    //     { -1,  0,  0},
+    //     { 0,  -1,  0},
+    //     { 0,  0,  0}
+    // };
+
+    float reflectYeqX[3][3] = {
+         { 0,  1,  0},
+         { 1,  0,  0},
+         { 0,  0,  1}
+    };
+
+
+    // Draw the original polygon
+    setcolor(WHITE);
+    line(Polygon[0][0], Polygon[1][0], Polygon[0][1], Polygon[1][1]);
+    line(Polygon[0][1], Polygon[1][1], Polygon[0][2], Polygon[1][2]);
+    line(Polygon[0][2], Polygon[1][2], Polygon[0][0], Polygon[1][0]);
+
+    float transformationMatrix[3][3];
+
+    // this function is to create a transformation matrix, Basically in this rotation and reflection matrix multiply.
+    transformationRotationReflection(reflectX, rotate90, transformationMatrix);
+
+    // this is the case 1 reflection about x axis and rotation about 90 degree.
+    // now lets multiply this transformation matrix to ploygon.
+
+    float result1[3][3];
+
+    case1ReflectionRotation(Polygon, transformationMatrix, result1);
+
+    // this is the case 2 X=Y.
+
+    float result2[3][3];
+
+    case2XeqY(Polygon, reflectYeqX, result2);
+
+
+    printf("result1");
+    for(int i = 0; i < 3; i ++){
+        printf("\n");
+        for(int j = 0; j < 3; j++){
+            printf("%f\t", result1[i][j]);
+        }
+    }
+
+     printf("\nresult2");
+    for(int i = 0; i < 3; i ++){
+        printf("\n");
+        for(int j = 0; j < 3; j++){
+            printf("%f\t", result2[i][j]);
+        }
+    }
+
+
+    getch();
+    closegraph();
+
+    
+
+    return 0;
+}
+
+void transformationRotationReflection(float reflectX[3][3], float rotate90[3][3], float transformationMatrix[3][3])
+{
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+            transformationMatrix[i][j] = 0;
+            for (int k = 0; k < 3; k++){
+                transformationMatrix[i][j] += reflectX[i][k] * rotate90[k][j];
+            }
+        }
+    }
+}
+
+void case1ReflectionRotation(float Polygon[3][3], float transformationMatrix[3][3], float result1[3][3])
+{
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 3; j++){
+            result1[i][j] = 0;
+            for(int k = 0; k < 3; k ++){
+                result1[i][j] += Polygon[i][k] * transformationMatrix[k][j];
+            }
+        }
+    }
+}
+
+void case2XeqY(float Polygon[3][3], float reflectYeqX[3][3], float result2[3][3])
+{
+    for (int i = 0; i < 3; i++){
+        for (int j = 0; j < 3; j++){
+            result2[i][j] = 0;
+            for (int k = 0; k < 3; k++){
+                result2[i][j] += Polygon[i][k] * reflectYeqX[k][j];
+            }
+        }
+    }
+}
